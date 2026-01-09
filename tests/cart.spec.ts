@@ -1,22 +1,40 @@
 import { test } from "../src/fixtures/base-fixture";
 import { expect } from "@playwright/test";
+import { parsePrice } from '../src/utils/price-parser';
 
 
-test("Test add to cart functionality", async({cartPage})=>{
-    await cartPage.goToUrl();
-    await expect(cartPage.productTile).toBeVisible();
-    await cartPage.productTile.click();
-    await expect(cartPage.increaseQuantityButton).toBeVisible();
-    await cartPage.increaseQuantityButton.click();
-    await cartPage.increaseQuantityButton.click();
-    await expect(cartPage.addToCartButton).toBeVisible();
-    await cartPage.addToCartButton.click();
-    await expect(cartPage.addTocartPopup).toBeVisible();
-    await cartPage.cartIcon.click();
-    await expect(cartPage.productQuantity).toBeVisible();
-    await cartPage.productQuantity.fill("3");
-    await expect(cartPage.productPrice).toBeVisible();
-    await expect(cartPage.cartTotal).toBeVisible();
-    
 
-})
+
+test("Validate cart price when quantity changes", async ({ cartPage }) => {
+  await cartPage.goToUrl();
+
+  await cartPage.productTile.click();
+  await cartPage.increaseQuantityButton.click();
+  await cartPage.increaseQuantityButton.click();
+
+  await cartPage.addToCartButton.click();
+  await cartPage.cartIcon.click();
+  await cartPage.productQuantity.fill("3");
+
+  
+  await expect(cartPage.cartTotal).toBeVisible();
+  const unitPriceText = await cartPage.productPrice.textContent();
+  expect(unitPriceText).not.toBeNull();
+
+  const unitPrice = parsePrice(unitPriceText!);
+
+
+  const quantityValue = await cartPage.productQuantity.inputValue();
+  const quantity = Number(quantityValue);
+
+ 
+  const expectedTotal = unitPrice * quantity;
+
+  
+  const cartTotalText = await cartPage.cartTotal.textContent();
+  expect(cartTotalText).not.toBeNull();
+
+  const actualTotal = parsePrice(cartTotalText!);
+
+  expect(actualTotal).toBeCloseTo(expectedTotal, 2);
+});

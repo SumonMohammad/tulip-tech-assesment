@@ -36,11 +36,4 @@ export class ContactPage {
     await this.page.waitForLoadState("networkidle");
   }
 
-  // async addToCartItem(): Promise<void>{
-  //   await this.addToCartButtom.click()
-  // }
-
-  // async removeItem(): Promise<void>{
-  //   await this.removeButton.click()
-  // }
 }
