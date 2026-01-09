@@ -13,8 +13,10 @@ test("Test add to cart functionality", async({cartPage})=>{
     await cartPage.addToCartButton.click();
     await expect(cartPage.addTocartPopup).toBeVisible();
     await cartPage.cartIcon.click();
+    await expect(cartPage.productQuantity).toBeVisible();
+    await cartPage.productQuantity.fill("3");
     await expect(cartPage.productPrice).toBeVisible();
     await expect(cartPage.cartTotal).toBeVisible();
-    await expect(cartPage.productQuantity).toBeVisible();
+    
 
 })
